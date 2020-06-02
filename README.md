@@ -7,6 +7,14 @@
 * Create Route
 
 
+### User stories
+* User goes to homepage and inserts a long link
+* User submits long URL
+* URL data gets stored in database 
+* Long URL gets converted to Short URL
+* User receives the shortened URL link 
+
+
 
 #### To RUN
 * python3 -m venv env
