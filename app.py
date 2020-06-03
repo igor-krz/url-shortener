@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+import secrets
 import os
 
 
@@ -38,8 +39,8 @@ class URLSchema(ma.Schema):
         fields = ('id', 'longUrl', 'shortUrl')
 
 # Init Schema
-URLs_schema = URLSchema(many=True, strict=True)
-URL_schema = URLSchema(strict=True)
+URLs_schema = URLSchema(many=True)
+URL_schema = URLSchema()
 
 
 # Generate secure tokens
@@ -59,9 +60,12 @@ def insert_url():
     new_url = URL(url_original, url_key)
 
     try:
-    db.session.add(new_url)
-    db.session.commit()
-    return render_template('added.html', url=url_key)
+        db.session.add(new_url)
+        db.session.commit()
+        return render_template('added.html', url=url_key)
+
+    except:
+        return 'ISSUE: link inserted cannot be added'
 
 # Get ALL data  
 @app.route('/all', methods=['GET'])
@@ -70,13 +74,11 @@ def get_all():
     result = URLs_schema.dump(all_urls)
     return jsonify(result)
 
-    except:
-        return 'ISSUE: link inserted cannot be added'
-
-
-
-
-
+# Get Route for Key
+@app.route('/<key>', methods=['GET'])
+def get_url(key):
+    product = URL.query.filter(URL.shortUrl == key).first().longUrl
+    return redirect(product)
 
 
 if __name__ == '__main__':
