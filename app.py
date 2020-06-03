@@ -22,25 +22,25 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # Create Model
-class url(db.Model):
+class URL(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    long_url = db.Column(db.String)
-    short_url = db.Column(db.String)
+    longUrl = db.Column(db.String)
+    shortUrl = db.Column(db.String)
 
 # Initialiser / Constructer (Pass in self and each fields)
-    def __init__(self, long_url, short_url):
-        self.long_url = long_url
-        self.short_url = short_url
+    def __init__(self, longUrl, shortUrl):
+        self.longUrl = longUrl
+        self.shortUrl = shortUrl
 
 
 # Create Product Schema
-class url_schema(ma.Schema):
+class URLSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'long_url', 'short_url')
+        fields = ('id', 'longUrl', 'shortUrl')
 
-# Init Schema either fetching lists or single url from schemas
-urls_schema = url_schema(many=True)
-url_schema = url_schema()
+# Init Schema
+URLs_schema = URLSchema(many=True)
+URL_schema = URLSchema()
 
 
 # Generate secure tokens
@@ -52,12 +52,12 @@ def random_key():
 def index():
     return render_template('index.html')
 
-# Route to Shorten url
+# Route to Shorten URL
 @app.route('/shorten', methods=['POST'])
 def insert_url():
     url_original = request.form['content']
     url_key = random_key()
-    new_url = url(url_original, url_key)
+    new_url = URL(url_original, url_key)
 
     try:
         db.session.add(new_url)
@@ -70,14 +70,14 @@ def insert_url():
 # Get ALL data  
 @app.route('/all', methods=['GET'])
 def get_all():
-    all_urls = url.query.all()
-    result = urls_schema.dump(all_urls)
+    all_urls = URL.query.all()
+    result = URLs_schema.dump(all_urls)
     return jsonify(result)
 
 # Get Route for Key
 @app.route('/<key>', methods=['GET'])
 def get_url(key):
-    product = url.query.filter(url.short_url == key).first().long_url
+    product = URL.query.filter(URL.shortUrl == key).first().longUrl
     return redirect(product)
 
 
