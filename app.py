@@ -41,10 +41,38 @@ class URLSchema(ma.Schema):
 URLs_schema = URLSchema(many=True, strict=True)
 URL_schema = URLSchema(strict=True)
 
+
+# Generate secure tokens
+def random_key():
+    return secrets.token_urlsafe(12)
+
 # Routes
 @app.route('/')
 def index():
     return render_template('index.html')
+
+# Route to Shorten URL
+@app.route('/shorten', methods=['POST'])
+def insert_url():
+    url_original = request.form['content']
+    url_key = random_key()
+    new_url = URL(url_original, url_key)
+
+    try:
+    db.session.add(new_url)
+    db.session.commit()
+    return render_template('added.html', url=url_key)
+
+# Get ALL data  
+@app.route('/all', methods=['GET'])
+def get_all():
+    all_urls = URL.query.all()
+    result = URLs_schema.dump(all_urls)
+    return jsonify(result)
+
+    except:
+        return 'ISSUE: link inserted cannot be added'
+
 
 
 
