@@ -10,7 +10,7 @@
 * Init Product Schema
 * Create Routes
 * Create Templates
-* Link Form to Routes - Methods[Post, Get]
+* Link Form to Routes 
 * Create Test
 * Create requirements.txt (freeze) 
 

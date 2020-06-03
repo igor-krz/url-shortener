@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import secrets
@@ -24,23 +24,23 @@ ma = Marshmallow(app)
 # Create Model
 class URL(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    longUrl = db.Column(db.String)
-    shortUrl = db.Column(db.String)
+    long_url = db.Column(db.String)
+    short_url = db.Column(db.String)
 
 # Initialiser / Constructer (Pass in self and each fields)
-    def __init__(self, longUrl, shortUrl):
-        self.longUrl = longUrl
-        self.shortUrl = shortUrl
+    def __init__(self, long_url, short_url):
+        self.long_url = long_url
+        self.short_url = short_url
 
 
 # Create Product Schema
-class URLSchema(ma.Schema):
+class url_schema(ma.Schema):
     class Meta:
-        fields = ('id', 'longUrl', 'shortUrl')
+        fields = ('id', 'long_url', 'short_url')
 
 # Init Schema
-URLs_schema = URLSchema(many=True)
-URL_schema = URLSchema()
+urls_schema = url_schema(many=True)
+url_schema = url_schema()
 
 
 # Generate secure tokens
@@ -71,13 +71,13 @@ def insert_url():
 @app.route('/all', methods=['GET'])
 def get_all():
     all_urls = URL.query.all()
-    result = URLs_schema.dump(all_urls)
+    result = urls_schema.dump(all_urls)
     return jsonify(result)
 
 # Get Route for Key
 @app.route('/<key>', methods=['GET'])
 def get_url(key):
-    product = URL.query.filter(URL.shortUrl == key).first().longUrl
+    product = URL.query.filter(URL.short_url == key).first().long_url
     return redirect(product)
 
 
