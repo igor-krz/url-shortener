@@ -45,7 +45,7 @@ URL_schema = URLSchema()
 
 # Generate secure tokens
 def random_key():
-    return secrets.token_urlsafe(12)
+    return secrets.token_urlsafe(10)
 
 # Routes
 @app.route('/')
@@ -57,6 +57,7 @@ def index():
 def insert_url():
     url_original = request.form['content']
     url_key = random_key()
+    
     new_url = URL(url_original, url_key)
 
     try:
