@@ -22,7 +22,7 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # Create Model
-class URL(db.Model):
+class url(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     long_url = db.Column(db.String)
     short_url = db.Column(db.String)
@@ -38,7 +38,7 @@ class url_schema(ma.Schema):
     class Meta:
         fields = ('id', 'long_url', 'short_url')
 
-# Init Schema
+# Init Schema either fetching lists or single url from schemas
 urls_schema = url_schema(many=True)
 url_schema = url_schema()
 
@@ -52,12 +52,12 @@ def random_key():
 def index():
     return render_template('index.html')
 
-# Route to Shorten URL
+# Route to Shorten url
 @app.route('/shorten', methods=['POST'])
 def insert_url():
     url_original = request.form['content']
     url_key = random_key()
-    new_url = URL(url_original, url_key)
+    new_url = url(url_original, url_key)
 
     try:
         db.session.add(new_url)
@@ -70,14 +70,14 @@ def insert_url():
 # Get ALL data  
 @app.route('/all', methods=['GET'])
 def get_all():
-    all_urls = URL.query.all()
+    all_urls = url.query.all()
     result = urls_schema.dump(all_urls)
     return jsonify(result)
 
 # Get Route for Key
 @app.route('/<key>', methods=['GET'])
 def get_url(key):
-    product = URL.query.filter(URL.short_url == key).first().long_url
+    product = url.query.filter(url.short_url == key).first().long_url
     return redirect(product)
 
 
