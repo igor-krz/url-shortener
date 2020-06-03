@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3' + \
 # Connect Database 
 db = SQLAlchemy(app)
 
-# Init ma
+# Initialise marshmallow
 ma = Marshmallow(app)
 
 # Create Model
@@ -26,7 +26,7 @@ class URL(db.Model):
     longUrl = db.Column(db.String)
     shortUrl = db.Column(db.String)
 
-# Pass in self and fields
+# Initialiser / Constructer (Pass in self and each fields)
     def __init__(self, longUrl, shortUrl):
         self.longUrl = longUrl
         self.shortUrl = shortUrl
@@ -38,8 +38,8 @@ class URLSchema(ma.Schema):
         fields = ('id', 'longUrl', 'shortUrl')
 
 # Init Schema
-URLs_schema = ProductSchema(many=True)
-URL_schema = URLSchema()
+URLs_schema = URLSchema(many=True, strict=True)
+URL_schema = URLSchema(strict=True)
 
 # Routes
 @app.route('/')
