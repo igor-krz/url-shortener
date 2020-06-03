@@ -12,8 +12,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # Config
 # track modifications - warning messages don't appear when running
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3' + \
-    os.path.join(basedir, 'db.sqlite3')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite3')
 
 # Connect Database 
 db = SQLAlchemy(app)
@@ -55,15 +54,15 @@ def index():
 # Route to Shorten URL
 @app.route('/shorten', methods=['POST'])
 def insert_url():
-    url_original = request.form['content']
+    url_original = request.form["content"]
     url_key = random_key()
     new_url = URL(url_original, url_key)
-
+    
     try:
         db.session.add(new_url)
         db.session.commit()
         return render_template('added.html', url=url_key)
-
+            
     except:
         return 'ISSUE: link inserted cannot be added'
 
